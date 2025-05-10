@@ -44,7 +44,7 @@
       display: flex;
       text-align: left;
       gap: 10px;
-      font-size: 20em;
+      font-size: 10em;
     }
 
     .odometer {
@@ -54,133 +54,151 @@
     }
 
     .timezone-display {
-      font-size: 6em;
+      font-size: 3em;
       text-align: left;
+      margin-top: 20px;
+    }
+
+    .timezone-block {
+      font-size: 2em;
+      text-align: left;
+      margin-top: 20px;
+    }
+
+    .timezone-block div {
+      margin: 5px 0;
     }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <div id="countdown" class="countdown">
-      <div class="odometer" id="countdown-days">00</div> :
-      <div class="odometer" id="countdown-hours">00</div> :
-      <div class="odometer" id="countdown-minutes">00</div> :
-      <div class="odometer" id="countdown-seconds">00</div>
+    <div id="countdown1" class="countdown">
+      <div class="odometer" id="countdown1-days">00</div> :
+      <div class="odometer" id="countdown1-hours">00</div> :
+      <div class="odometer" id="countdown1-minutes">00</div> :
+      <div class="odometer" id="countdown1-seconds">00</div>
     </div>
-    <div id="timezone-display" class="timezone-display"></div>
+
+    <div id="timezone1-display" class="timezone-display"></div>
+  </div>
+
+  <div class="container">
+    <div id="countdown2" class="countdown">
+      <div class="odometer" id="countdown2-days">00</div> :
+      <div class="odometer" id="countdown2-hours">00</div> :
+      <div class="odometer" id="countdown2-minutes">00</div> :
+      <div class="odometer" id="countdown2-seconds">00</div>
+    </div>
+
+    <div id="timezone2-display" class="timezone-display"></div>
+  </div>
+
+  <div class="container">
+    <div id="countdown3" class="countdown">
+      <div class="odometer" id="countdown3-days">00</div> :
+      <div class="odometer" id="countdown3-hours">00</div> :
+      <div class="odometer" id="countdown3-minutes">00</div> :
+      <div class="odometer" id="countdown3-seconds">00</div>
+    </div>
+
+    <div id="timezone3-display" class="timezone-display"></div>
   </div>
 
   <script>
-    let countdownInterval;
+    let countdownInterval1, countdownInterval2, countdownInterval3;
 
-    const timezones = {
-      "Pacific/Kiritimati": "UTC +14 - Kiritimati, Line Islands",
-  "Pacific/Apia": "UTC +13 - Apia, Samoa",
-  "Pacific/Fakaofo": "UTC +13 - Fakaofo, Tokelau",
-  "Pacific/Tongatapu": "UTC +13 - Tongatapu, Tonga",
-  "Pacific/Chatham": "UTC +13:45 - Chatham Islands, New Zealand",
-  "Pacific/Auckland": "UTC +13 - Auckland, New Zealand",
-  "Pacific/Fiji": "UTC +12 - Fiji",
-  "Pacific/Norfolk": "UTC +11:30 - Norfolk Island, Australia",
-  "Australia/Lord_Howe": "UTC +11 - Lord Howe Island, Australia",
-  "Australia/Sydney": "UTC +10 - Sydney, Australia",
-  "Australia/Adelaide": "UTC +9:30 - Adelaide, Australia",
-  "Australia/Brisbane": "UTC +10 - Brisbane, Australia",
-  "Australia/Darwin": "UTC +9:30 - Darwin, Australia",
-  "Asia/Tokyo": "UTC +9 - Tokyo, Japan",
-  "Asia/Seoul": "UTC +9 - Seoul, South Korea",
-  "Asia/Pyongyang": "UTC +9 - Pyongyang, North Korea",
-  "Asia/Hong_Kong": "UTC +8 - Hong Kong",
-  "Asia/Singapore": "UTC +8 - Singapore",
-  "Asia/Shanghai": "UTC +8 - Shanghai, China",
-  "Asia/Taipei": "UTC +8 - Taipei, Taiwan",
-  "Australia/Perth": "UTC +8 - Perth, Australia",
-  "Asia/Jakarta": "UTC +7 - Jakarta, Indonesia",
-  "Asia/Bangkok": "UTC +7 - Bangkok, Thailand",
-  "Asia/Ho_Chi_Minh": "UTC +7 - Ho Chi Minh, Vietnam",
-  "Asia/Yangon": "UTC +6:30 - Yangon, Myanmar",
-  "Asia/Dhaka": "UTC +6 - Dhaka, Bangladesh",
-  "Asia/Kathmandu": "UTC +5:45 - Kathmandu, Nepal",
-  "Asia/Colombo": "UTC +5:30 - Colombo, Sri Lanka",
-  "Asia/Kolkata": "UTC +5:30 - Kolkata, India",
-  "Asia/Karachi": "UTC +5 - Karachi, Pakistan",
-  "Asia/Tashkent": "UTC +5 - Tashkent, Uzbekistan",
-  "Asia/Kabul": "UTC +4:30 - Kabul, Afghanistan",
-  "Asia/Tehran": "UTC +3:30 - Tehran, Iran",
-  "Asia/Dubai": "UTC +4 - Dubai, UAE",
-  "Asia/Yerevan": "UTC +4 - Yerevan, Armenia",
-  "Europe/Moscow": "UTC +3 - Moscow, Russia",
-  "Asia/Jerusalem": "UTC +2 - Jerusalem, Israel",
-  "Africa/Cairo": "UTC +2 - Cairo, Egypt",
-  "Europe/Bucharest": "UTC +2 - Bucharest, Romania",
-  "Europe/Athens": "UTC +2 - Athens, Greece",
-  "Europe/Helsinki": "UTC +2 - Helsinki, Finland",
-  "Europe/Paris": "UTC +1 - Paris, France",
-  "Europe/London": "UTC +0 - London, UK",
-  "UTC": "UTC +0 - Coordinated Universal Time",
-  "Atlantic/Azores": "UTC-1 - Azores, Portugal",
-  "America/Noronha": "UTC-2 - Fernando de Noronha, Brazil",
-  "America/Sao_Paulo": "UTC-3 - São Paulo, Brazil",
-  "America/St_Johns": "UTC-3:30 - St. John's, Canada",
-  "America/Halifax": "UTC-4 - Halifax, Canada",
-  "America/New_York": "UTC-5 - New York, USA",
-  "America/Chicago": "UTC-6 - Chicago, USA",
-  "America/Denver": "UTC-7 - Denver, USA",
-  "America/Los_Angeles": "UTC-8 - Los Angeles, USA",
-  "America/Anchorage": "UTC-9 - Anchorage, USA",
-  "Pacific/Honolulu": "UTC-10 - Honolulu, USA"
+const timezones = {
+  "Pacific/Kiritimati": { label: "UTC +14 - Kiritimati, Line Islands", offset: "UTC +14" },
+  "Pacific/Apia": { label: "UTC +13 - Apia, Samoa", offset: "UTC +13" },
+  "Pacific/Fakaofo": { label: "UTC +13 - Fakaofo, Tokelau", offset: "UTC +13" },
+  "Pacific/Tongatapu": { label: "UTC +13 - Tongatapu, Tonga", offset: "UTC +13" },
+  "Pacific/Chatham": { label: "UTC +13:45 - Chatham Islands, New Zealand", offset: "UTC +13:45" },
+  "Pacific/Auckland": { label: "UTC +13 - Auckland, New Zealand", offset: "UTC +13" },
+  "Pacific/Fiji": { label: "UTC +12 - Fiji", offset: "UTC +12" },
+  "Pacific/Norfolk": { label: "UTC +11:30 - Norfolk Island, Australia", offset: "UTC +11:30" },
+  "Australia/Lord_Howe": { label: "UTC +11 - Lord Howe Island, Australia", offset: "UTC +11" },
+  "Australia/Sydney": { label: "UTC +10 - Sydney, Australia", offset: "UTC +10" },
+  "Australia/Adelaide": { label: "UTC +9:30 - Adelaide, Australia", offset: "UTC +9:30" },
+  "Australia/Brisbane": { label: "UTC +10 - Brisbane, Australia", offset: "UTC +10" },
+  "Australia/Darwin": { label: "UTC +9:30 - Darwin, Australia", offset: "UTC +9:30" },
+  "Asia/Tokyo": { label: "UTC +9 - Tokyo, Japan", offset: "UTC +9" },
+  "Asia/Seoul": { label: "UTC +9 - Seoul, South Korea", offset: "UTC +9" },
+  "Asia/Pyongyang": { label: "UTC +9 - Pyongyang, North Korea", offset: "UTC +9" },
+  "Asia/Hong_Kong": { label: "UTC +8 - Hong Kong", offset: "UTC +8" },
+  "Asia/Singapore": { label: "UTC +8 - Singapore", offset: "UTC +8" },
+  "Asia/Shanghai": { label: "UTC +8 - Shanghai, China", offset: "UTC +8" },
+  "Asia/Taipei": { label: "UTC +8 - Taipei, Taiwan", offset: "UTC +8" },
+  "Australia/Perth": { label: "UTC +8 - Perth, Australia", offset: "UTC +8" },
+  "Asia/Jakarta": { label: "UTC +7 - Jakarta, Indonesia", offset: "UTC +7" },
+  "Asia/Bangkok": { label: "UTC +7 - Bangkok, Thailand", offset: "UTC +7" },
+  "Asia/Ho_Chi_Minh": { label: "UTC +7 - Ho Chi Minh, Vietnam", offset: "UTC +7" },
+  "Asia/Yangon": { label: "UTC +6:30 - Yangon, Myanmar", offset: "UTC +6:30" },
+  "Asia/Dhaka": { label: "UTC +6 - Dhaka, Bangladesh", offset: "UTC +6" },
+  "Asia/Kathmandu": { label: "UTC +5:45 - Kathmandu, Nepal", offset: "UTC +5:45" },
+  "Asia/Colombo": { label: "UTC +5:30 - Colombo, Sri Lanka", offset: "UTC +5:30" },
+  "Asia/Kolkata": { label: "UTC +5:30 - Kolkata, India", offset: "UTC +5:30" },
+  "Asia/Karachi": { label: "UTC +5 - Karachi, Pakistan", offset: "UTC +5" },
+  "Asia/Tashkent": { label: "UTC +5 - Tashkent, Uzbekistan", offset: "UTC +5" },
+  "Asia/Kabul": { label: "UTC +4:30 - Kabul, Afghanistan", offset: "UTC +4:30" },
+  "Asia/Tehran": { label: "UTC +3:30 - Tehran, Iran", offset: "UTC +3:30" },
+  "Asia/Dubai": { label: "UTC +4 - Dubai, UAE", offset: "UTC +4" },
+  "Asia/Yerevan": { label: "UTC +4 - Yerevan, Armenia", offset: "UTC +4" },
+  "Europe/Moscow": { label: "UTC +3 - Moscow, Russia", offset: "UTC +3" },
+  "Asia/Jerusalem": { label: "UTC +2 - Jerusalem, Israel", offset: "UTC +2" },
+  "Africa/Cairo": { label: "UTC +2 - Cairo, Egypt", offset: "UTC +2" },
+  "Europe/Bucharest": { label: "UTC +2 - Bucharest, Romania", offset: "UTC +2" },
+  "Europe/Athens": { label: "UTC +2 - Athens, Greece", offset: "UTC +2" },
+  "Europe/Helsinki": { label: "UTC +2 - Helsinki, Finland", offset: "UTC +2" },
+  "Europe/Paris": { label: "UTC +1 - Paris, France", offset: "UTC +1" },
+  "Europe/London": { label: "UTC +0 - London, UK", offset: "UTC +0" },
+  "UTC": { label: "UTC +0 - Coordinated Universal Time", offset: "UTC +0" },
+  "Atlantic/Azores": { label: "UTC-1 - Azores, Portugal", offset: "UTC -1" },
+  "America/Noronha": { label: "UTC-2 - Fernando de Noronha, Brazil", offset: "UTC -2" },
+  "America/Sao_Paulo": { label: "UTC-3 - São Paulo, Brazil", offset: "UTC -3" },
+  "America/St_Johns": { label: "UTC-3:30 - St. John's, Canada", offset: "UTC -3:30" },
+  "America/Halifax": { label: "UTC-4 - Halifax, Canada", offset: "UTC -4" },
+  "America/New_York": { label: "UTC-5 - New York, USA", offset: "UTC -5" },
+  "America/Chicago": { label: "UTC-6 - Chicago, USA", offset: "UTC -6" },
+  "America/Denver": { label: "UTC-7 - Denver, USA", offset: "UTC -7" },
+  "America/Los_Angeles": { label: "UTC-8 - Los Angeles, USA", offset: "UTC -8" },
+  "America/Anchorage": { label: "UTC-9 - Anchorage, USA", offset: "UTC -9" },
+  "Pacific/Honolulu": { label: "UTC-10 - Honolulu, USA", offset: "UTC -10" }
 };
+function updateCountdownDisplay(days, hours, minutes, seconds, countdownId) {
+  const odometer = document.getElementById(countdownId);
+  odometer.querySelector(`#${countdownId}-days`).innerText = days < 10 ? '0' + days : days;
+  odometer.querySelector(`#${countdownId}-hours`).innerText = hours < 10 ? '0' + hours : hours;
+  odometer.querySelector(`#${countdownId}-minutes`).innerText = minutes < 10 ? '0' + minutes : minutes;
+  odometer.querySelector(`#${countdownId}-seconds`).innerText = seconds < 10 ? '0' + seconds : seconds;
+}
 
+function updateCountdown(timezone, countdownId, timezoneId) {
+  const now = new Date();
+  const timeZoneDate = new Date(now.toLocaleString("en-US", { timeZone: timezone }));
+  const newYear = new Date(timeZoneDate.getFullYear() + 1, 0, 1);
+  const timeRemaining = newYear.getTime() - timeZoneDate.getTime();
 
-    function startCountdown() {
-      if (countdownInterval) clearInterval(countdownInterval);
+  if (timeRemaining <= 0) {
+    clearInterval(countdownId);
+    updateCountdownDisplay(0, 0, 0, 0, countdownId);
+  } else {
+    const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+    updateCountdownDisplay(days, hours, minutes, seconds, countdownId);
+    document.getElementById(`timezone${timezoneId}-display`).innerText = `${timezones[timezone].label} (${timezone})`;
+  }
+}
 
-      countdownInterval = setInterval(() => {
-        const now = new Date();
-        const { timeRemaining, timezone } = calculateClosestNewYear(now);
+function startCountdown() {
+  countdownInterval1 = setInterval(() => updateCountdown("Pacific/Kiritimati", "countdown1", 1), 1000);
+  countdownInterval2 = setInterval(() => updateCountdown("Pacific/Apia", "countdown2", 2), 1000);
+  countdownInterval3 = setInterval(() => updateCountdown("Pacific/Fakaofo", "countdown3", 3), 1000);
+}
 
-        if (timeRemaining <= 0) {
-          clearInterval(countdownInterval);
-          updateCountdownDisplay(0, 0, 0, 0);
-        } else {
-          const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
-          const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-          const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
-          const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
-          updateCountdownDisplay(days, hours, minutes, seconds);
-          document.getElementById("timezone-display").innerText = timezones[timezone];
-        }
-      }, 1000); 
-    }
-
-    function calculateClosestNewYear(now) {
-      let closestTime = Infinity;
-      let closestTimezone = '';
-
-      for (const timezone in timezones) {
-        const timeZoneDate = new Date(new Date().toLocaleString("en-US", { timeZone: timezone }));
-        const newYear = new Date(timeZoneDate.getFullYear() + 1, 0, 1);
-        const timeDifference = newYear.getTime() - timeZoneDate.getTime();
-
-        if (timeDifference < closestTime) {
-          closestTime = timeDifference;
-          closestTimezone = timezone;
-        }
-      }
-
-      return { timeRemaining: closestTime, timezone: closestTimezone };
-    }
-
-    function updateCountdownDisplay(days, hours, minutes, seconds) {
-      document.getElementById("countdown-days").innerText = String(days).padStart(2, "0");
-      document.getElementById("countdown-hours").innerText = String(hours).padStart(2, "0");
-      document.getElementById("countdown-minutes").innerText = String(minutes).padStart(2, "0");
-      document.getElementById("countdown-seconds").innerText = String(seconds).padStart(2, "0");
-    }
-
-    // Lancer le compte à rebours au chargement
-    startCountdown();
+startCountdown();
   </script>
 
 </body>
